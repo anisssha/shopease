@@ -27,9 +27,19 @@ export default function ClientProduct({ product, relatedProducts }: Props) {
     await new Promise((r) => setTimeout(r, 500));
     try {
       addItem(product, quantity);
-      addToast(`Added ${quantity} ${product.title} to cart`, "success");
+
+      // ✅ Fix: use object instead of two arguments
+      addToast({
+        title: `Added ${quantity} ${product.title} to cart`,
+        variant: "success",
+        duration: 3000, // optional
+      });
     } catch {
-      addToast("Failed to add item to cart", "error");
+      addToast({
+        title: "Failed to add item to cart",
+        variant: "error",
+        duration: 3000,
+      });
     } finally {
       setIsAddingToCart(false);
     }
