@@ -26,12 +26,22 @@ export default function CartPage() {
 
   const handleRemoveItem = (id: number, title: string) => {
     removeItem(id);
-    addToast(`Removed ${title} from cart`, "info");
+    addToast({
+      title: `Removed ${title} from cart`,
+      description: "Item removed successfully",
+      // optional fields supported by your hook/UI:
+      duration: 3000,
+      variant: "info",
+    });
   };
-
   const handleClearCart = () => {
     clearCart();
-    addToast("Cart cleared", "info");
+    addToast({
+      title: "Cart cleared",
+      description: "Your cart has been emptied",
+      duration: 3000,
+      variant: "info",
+    });
   };
 
   if (items.length === 0) {
