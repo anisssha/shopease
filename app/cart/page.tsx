@@ -1,23 +1,23 @@
+// app/cart/page.tsx
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
+import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/useToast";
 import { ToastContainer } from "@/components/Toast";
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from "lucide-react";
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, clearCart, getTotalPrice } =
     useCart();
   const { toasts, addToast, removeToast } = useToast();
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
     }).format(price);
-  };
 
   const handleQuantityChange = (id: number, newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -29,11 +29,11 @@ export default function CartPage() {
     addToast({
       title: `Removed ${title} from cart`,
       description: "Item removed successfully",
-      // optional fields supported by your hook/UI:
       duration: 3000,
       variant: "info",
     });
   };
+
   const handleClearCart = () => {
     clearCart();
     addToast({
@@ -44,7 +44,8 @@ export default function CartPage() {
     });
   };
 
-  if (items.length === 0) {
+  // If cart is empty — show empty state
+  if (!items || items.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <ToastContainer toasts={toasts} onRemove={removeToast} />
@@ -74,6 +75,7 @@ export default function CartPage() {
     );
   }
 
+  // Main cart UI
   return (
     <div className="container mx-auto px-4 py-8">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
@@ -92,6 +94,8 @@ export default function CartPage() {
           <button
             onClick={handleClearCart}
             className="flex items-center gap-2 px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
+            aria-label="Clear cart"
+            type="button"
           >
             <Trash2 className="w-4 h-4" />
             Clear Cart
@@ -108,15 +112,13 @@ export default function CartPage() {
               >
                 <div className="flex items-center gap-4">
                   {/* Product Image */}
-                  <div className="w-20 h-20 bg-gray-50 rounded-lg p-2 flex-shrink-0">
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
+                  <div className="w-20 h-20 bg-gray-50 rounded-lg p-2 flex-shrink-0 relative">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      className="object-contain"
+                    />
                   </div>
 
                   {/* Product Details */}
@@ -138,6 +140,8 @@ export default function CartPage() {
                         }
                         disabled={item.quantity <= 1}
                         className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        aria-label={`Decrease quantity for ${item.title}`}
+                        type="button"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
@@ -149,6 +153,8 @@ export default function CartPage() {
                           handleQuantityChange(item.id, item.quantity + 1)
                         }
                         className="p-2 hover:bg-gray-100 transition-colors"
+                        aria-label={`Increase quantity for ${item.title}`}
+                        type="button"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -159,6 +165,8 @@ export default function CartPage() {
                       onClick={() => handleRemoveItem(item.id, item.title)}
                       className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                       title="Remove item"
+                      aria-label={`Remove ${item.title} from cart`}
+                      type="button"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -210,7 +218,10 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <button className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium mb-4">
+              <button
+                className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium mb-4"
+                type="button"
+              >
                 Proceed to Checkout
               </button>
 
