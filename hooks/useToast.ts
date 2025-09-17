@@ -4,28 +4,34 @@
 import { useCallback, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
-export type ToastProps = {
+/**
+ * Variant names used by the UI
+ */
+export type ToastType = "success" | "error" | "info" | "default";
+
+/**
+ * The Toast shape exported for UI components to consume.
+ * Matches the shape used in components/Toast.tsx
+ */
+export type Toast = {
   id: string;
   title?: string;
   description?: string;
-  /**
-   * Optional action node rendered next to the toast (e.g. a button)
-   */
   action?: ReactNode;
-  /**
-   * Optional variant props you might want to pass to your Toast component
-   * (e.g. intent: 'success' | 'error' etc). Keep it open-ended.
-   */
+  variant?: ToastType;
+  duration?: number; // ms, 0 = persistent
+  // allow arbitrary extra fields
   [key: string]: any;
 };
 
 type UseToastReturn = {
-  toasts: ToastProps[];
+  toasts: Toast[];
   /**
    * Add a toast. Returns the generated id.
+   * Usage: addToast({ title: 'Saved', description: 'Saved!', variant: 'success', duration: 3000 })
    */
   addToast: (
-    payload: Omit<Partial<ToastProps>, "id"> & { duration?: number }
+    payload?: Omit<Partial<Toast>, "id"> & { duration?: number }
   ) => string;
   /**
    * Remove a toast by id.
@@ -34,7 +40,7 @@ type UseToastReturn = {
 };
 
 export function useToast(): UseToastReturn {
-  const [toasts, setToasts] = useState<ToastProps[]>([]);
+  const [toasts, setToasts] = useState<Toast[]>([]);
   // track timers to auto-clear
   const timers = useRef<Record<string, number>>({});
 
@@ -47,20 +53,24 @@ export function useToast(): UseToastReturn {
   }, []);
 
   const addToast = useCallback(
-    ({
-      duration = 4000,
-      title,
-      description,
-      action,
-      ...rest
-    }: Omit<Partial<ToastProps>, "id"> & { duration?: number } = {}) => {
+    (payload: Omit<Partial<Toast>, "id"> & { duration?: number } = {}) => {
+      const {
+        duration = 4000,
+        title,
+        description,
+        action,
+        variant,
+        ...rest
+      } = payload;
       const id =
         String(Date.now()) + "-" + Math.random().toString(36).slice(2, 8);
-      const toast: ToastProps = {
+      const toast: Toast = {
         id,
         title,
         description,
         action,
+        variant,
+        duration,
         ...rest,
       };
       setToasts((prev) => [...prev, toast]);

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { Toast as ToastType } from '@/hooks/useToast';
-import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
+import { useEffect } from "react";
+import { Toast as ToastType } from "@/hooks/useToast";
+import { X, CheckCircle, AlertCircle, Info } from "lucide-react";
 
 interface ToastProps {
   toast: ToastType;
@@ -20,11 +20,11 @@ export function Toast({ toast, onRemove }: ToastProps) {
 
   const getIcon = () => {
     switch (toast.type) {
-      case 'success':
+      case "success":
         return <CheckCircle className="w-5 h-5 text-green-500" />;
-      case 'error':
+      case "error":
         return <AlertCircle className="w-5 h-5 text-red-500" />;
-      case 'info':
+      case "info":
         return <Info className="w-5 h-5 text-blue-500" />;
       default:
         return <CheckCircle className="w-5 h-5 text-green-500" />;
@@ -33,21 +33,25 @@ export function Toast({ toast, onRemove }: ToastProps) {
 
   const getBgColor = () => {
     switch (toast.type) {
-      case 'success':
-        return 'bg-green-50 border-green-200';
-      case 'error':
-        return 'bg-red-50 border-red-200';
-      case 'info':
-        return 'bg-blue-50 border-blue-200';
+      case "success":
+        return "bg-green-50 border-green-200";
+      case "error":
+        return "bg-red-50 border-red-200";
+      case "info":
+        return "bg-blue-50 border-blue-200";
       default:
-        return 'bg-green-50 border-green-200';
+        return "bg-green-50 border-green-200";
     }
   };
 
   return (
-    <div className={`flex items-center gap-3 p-4 rounded-lg border shadow-lg ${getBgColor()} animate-in slide-in-from-top duration-300`}>
+    <div
+      className={`flex items-center gap-3 p-4 rounded-lg border shadow-lg ${getBgColor()} animate-in slide-in-from-top duration-300`}
+    >
       {getIcon()}
-      <p className="flex-1 text-sm font-medium text-gray-800">{toast.message}</p>
+      <p className="flex-1 text-sm font-medium text-gray-800">
+        {toast.message}
+      </p>
       <button
         onClick={() => onRemove(toast.id)}
         className="p-1 rounded-full hover:bg-gray-200 transition-colors"
@@ -66,7 +70,7 @@ interface ToastContainerProps {
 export function ToastContainer({ toasts, onRemove }: ToastContainerProps) {
   return (
     <div className="fixed top-4 right-4 z-50 space-y-2">
-      {toasts.map(toast => (
+      {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} onRemove={onRemove} />
       ))}
     </div>
